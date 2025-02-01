@@ -20,6 +20,6 @@ from faq.views import home_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("faq.urls")), # for api
+    path("api/", include("faq.urls")), # for api
     path("", home_view),
 ]

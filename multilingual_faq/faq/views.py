@@ -1,19 +1,25 @@
 from rest_framework import generics
 from rest_framework.response import Response
+from django.http import HttpResponse
 from .models import FAQ
 from .serializers import FAQSerializer
-from django.http import HttpResponse
+from django.shortcuts import render
 
-class FAQListView(generics.ListAPIView): #this lists the faqs at "url/faqs"
+class FAQListView(generics.ListAPIView):  # Lists the FAQs at "url/api/faqs/"
     queryset = FAQ.objects.all()
     serializer_class = FAQSerializer
 
-    def list(self, request, *args, **kwargs):
-        lang = request.query_params.get("lang", "en")  # Get language from request
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True, context={"lang": lang})
-        return Response(serializer.data)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["lang"] = self.request.query_params.get("lang", "en")  # Default to English
+        return context
 
-#this acts as homepage at base url
+# homeapage at base url
 def home_view(request):
-    return HttpResponse("<h1 >Welcome to the FAQ System</h1><p>Visit <a href='/api/faqs/'>FAQs</a></p>")
+    return HttpResponse(
+        "<h1>Welcome to the FAQ System</h1>"
+        "<p>Visit <a href='/api/faqs/'>FAQs</a></p>"
+    )
+
+def faq_list_view(request):
+    return render(request, "faq_list.html")
