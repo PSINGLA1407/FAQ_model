@@ -3,6 +3,14 @@
 
 This repository contains a Django web application that serves as the foundation for web development with Django and REST APIs. This project is built with Docker for containerization and allows you to easily set up and deploy the app locally or on any server.
 
+##Hosted at http://34.45.129.202:8000/api/faqs/ suing Docker and GCP
+
+The faqs can be modified at the admin panel at # http://34.45.129.202:8000/admin
+Username: superuser
+Password: superuseradmin
+
+Access to translated faqs at http://34.45.129.202:8000/api/faqs/?lang=hi and http://34.45.129.202:8000/api/faqs/?lang=bn
+
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
 2. [Project Setup](#project-setup)
