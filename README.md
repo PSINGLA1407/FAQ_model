@@ -180,20 +180,6 @@ If you want to access the Django admin interface, create a superuser:
 python manage.py createsuperuser
 ```
 
----
-
-## Deployment
-
-You can deploy this Django application on various platforms such as AWS, Heroku, or your own server. The recommended approach is to use Docker to ensure a smooth deployment process.
-
-- **For Docker-based deployment**, follow the steps to build and run the image, and ensure proper networking and environment configurations.
-
-For deployment to **Heroku**, use the following command:
-
-```bash
-git push heroku master
-```
-
 Ensure you have added a `Procfile` to your project with the following content:
 
 ```
@@ -201,6 +187,202 @@ web: gunicorn your_django_app.wsgi:application
 ```
 
 ---
+
+## **API Endpoints**
+
+The FAQ management API allows you to manage and fetch FAQs in different languages. Below are the available endpoints for interacting with the system.
+
+### **1. Fetch All FAQs**
+#### `GET /api/faqs/`
+This endpoint returns all the FAQs in the default language (English) by default.
+
+**Response:**
+
+```json
+[
+  {
+    "id": 1,
+    "translated_question": "What is Django?",
+    "translated_answer": "Django is a web framework."
+  },
+  {
+    "id": 2,
+    "translated_question": "How to install Django?",
+    "translated_answer": "You can install Django using pip."
+  }
+]
+```
+
+**Query Parameters:**
+- `lang`: Optional query parameter to fetch FAQs in a specific language.
+  - Example: `GET /api/faqs/?lang=hi` to get FAQs in Hindi.
+
+---
+
+### **2. Fetch FAQs in a Specific Language**
+#### `GET /api/faqs/?lang=<language_code>`
+This endpoint returns all FAQs in the specified language. If a translation is not available for a question or answer, it will fall back to the default language (English).
+
+**Example Request:**
+
+```bash
+curl http://localhost:8000/api/faqs/?lang=hi
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": 1,
+    "translated_question": "डjango क्या है?",
+    "translated_answer": "Django एक वेब फ्रेमवर्क है।"
+  },
+  {
+    "id": 2,
+    "translated_question": "Django कैसे इंस्टॉल करें?",
+    "translated_answer": "आप pip का उपयोग करके Django को इंस्टॉल कर सकते हैं।"
+  }
+]
+```
+
+**Supported Languages:**
+- `en`: English (default)
+- `hi`: Hindi
+- `bn`: Bengali
+
+---
+
+### **3. Fetch a Single FAQ by ID**
+#### `GET /api/faqs/{id}/`
+This endpoint returns a single FAQ identified by the FAQ `id`.
+
+**Example Request:**
+
+```bash
+curl http://localhost:8000/api/faqs/1/
+```
+
+**Response:**
+
+```json
+{
+  "id": 1,
+  "translated_question": "What is Django?",
+  "translated_answer": "Django is a web framework."
+}
+```
+
+**Query Parameters:**
+- `lang`: Optional query parameter to fetch a single FAQ in a specific language.
+  - Example: `GET /api/faqs/1/?lang=hi` to get the FAQ in Hindi.
+
+---
+
+### **4. Create a New FAQ**
+#### `POST /api/faqs/`
+This endpoint allows you to create a new FAQ with a question and an answer. Translations can also be provided in the request.
+
+**Example Request:**
+
+```bash
+curl -X POST http://localhost:8000/api/faqs/ \
+  -H "Content-Type: application/json" \
+  -d '{
+        "question": "What is Django?",
+        "answer": "Django is a web framework.",
+        "question_hi": "डjango क्या है?",
+        "answer_hi": "Django एक वेब फ्रेमवर्क है।",
+        "question_bn": "ডjango কী?",
+        "answer_bn": "Django একটি ওয়েব ফ্রেমওয়ার্ক।"
+      }'
+```
+
+**Response:**
+
+```json
+{
+  "id": 3,
+  "translated_question": "What is Django?",
+  "translated_answer": "Django is a web framework."
+}
+```
+
+---
+
+### **5. Update an Existing FAQ**
+#### `PUT /api/faqs/{id}/`
+This endpoint allows you to update an existing FAQ, including its translations.
+
+**Example Request:**
+
+```bash
+curl -X PUT http://localhost:8000/api/faqs/1/ \
+  -H "Content-Type: application/json" \
+  -d '{
+        "question": "What is Django?",
+        "answer": "Django is a high-level Python web framework.",
+        "question_hi": "डjango क्या है?",
+        "answer_hi": "Django एक उच्च-स्तरीय पायथन वेब फ्रेमवर्क है।",
+        "question_bn": "ডjango কী?",
+        "answer_bn": "Django একটি উচ্চ-স্তরের পাইথন ওয়েব ফ্রেমওয়ার্ক।"
+      }'
+```
+
+**Response:**
+
+```json
+{
+  "id": 1,
+  "translated_question": "What is Django?",
+  "translated_answer": "Django is a high-level Python web framework."
+}
+```
+
+---
+
+### **6. Delete an FAQ**
+#### `DELETE /api/faqs/{id}/`
+This endpoint allows you to delete an existing FAQ by its `id`.
+
+**Example Request:**
+
+```bash
+curl -X DELETE http://localhost:8000/api/faqs/1/
+```
+
+**Response:**
+
+```json
+{
+  "message": "FAQ with id 1 has been deleted."
+}
+```
+
+---
+
+### **Error Handling**
+
+If an invalid request is made (e.g., invalid language or non-existent FAQ), the API will return appropriate error messages.
+
+**Example Error Response for Non-existent FAQ:**
+
+```json
+{
+  "detail": "Not found."
+}
+```
+
+**Example Error Response for Invalid Language:**
+
+```json
+{
+  "detail": "Invalid language code."
+}
+```
+
+---
+
 
 ## License
 
